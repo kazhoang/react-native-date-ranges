@@ -8,16 +8,16 @@ import Month from "./Month";
 const styles = {
   calendar: {
     backgroundColor: "rgb(255, 255, 255)",
-    marginHorizontal: normalize(10)
+    marginHorizontal: normalize(10),
   },
   headActionContainer: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     paddingTop: 10,
-    paddingBottom: 10,
+    paddingBottom: 40,
     paddingLeft: 10,
-    paddingRight: 10
+    paddingRight: 10,
   },
   headCoverContainer: {
     paddingTop: 20,
@@ -30,7 +30,7 @@ const styles = {
   },
   dateContainer: {
     flexDirection: "row",
-    justifyContent: "space-between"
+    justifyContent: "space-between",
   },
   headTitleText: {
     fontSize: normalize(20),
@@ -64,9 +64,7 @@ export default class DateRange extends Component {
       clearEnd: "",
       clearSingle: props.currentDate.format(defalutFormat) || "",
       selectState: "monthAndDate", // or year
-      selectedYear: null,
-      textStartDate: props.textStartDate || "Start Date",
-      textEndDate: props.textEndDate || "End Date",
+      selectedYear: null
     };
   }
   previousMonth = () => {
@@ -137,7 +135,7 @@ export default class DateRange extends Component {
 
     const headerContainer = {
       ...styles.headCoverContainer,
-      ...customStyles.headerStyle
+      ...customStyles.headerStyle,
     };
     const markTitle = {
       ...styles.headTitleText,
@@ -156,7 +154,7 @@ export default class DateRange extends Component {
       ...customStyles.headerDateSingle
     };
     return (
-      <View>
+      <View style={{ flex: 1 }}>
         <View style={headerContainer}>
           {this.props.mode === "single" && (
             <View>
@@ -177,86 +175,88 @@ export default class DateRange extends Component {
               <Text style={markTitle}>{markText}</Text>
               <View style={styles.dateContainer}>
                 <Text style={headerDate}>
-                  {this.state.clearStart ? this.state.clearStart : this.state.textStartDate}
+                  {this.state.clearStart ? this.state.clearStart : "Start Date"}
                 </Text>
                 <Text style={styles.headTitleText} />
                 <Text style={headerDate}>
-                  {this.state.clearEnd ? this.state.clearEnd : this.state.textEndDate}
+                  {this.state.clearEnd ? this.state.clearEnd : "End Date"}
                 </Text>
               </View>
             </View>
           )}
         </View>
-        {this.state.selectState === "monthAndDate" && (
-          <View style={styles.calendar}>
-            <View style={styles.headActionContainer}>
-              <TouchableOpacity onPress={this.previousMonth}>
+        <View style={{ flex: 1, marginTop: 30  }}>
+          {this.state.selectState === "monthAndDate" && (
+            <View style={styles.calendar}>
+              <View style={styles.headActionContainer}>
+                <TouchableOpacity onPress={this.previousMonth}>
+                  <Text
+                    style={{
+                      paddingHorizontal: 15,
+                      fontSize: 18,
+                      fontWeight: "bold"
+                    }}
+                  >
+                    {"<"}
+                  </Text>
+                </TouchableOpacity>
                 <Text
-                  style={{
-                    paddingHorizontal: 15,
-                    fontSize: 18,
-                    fontWeight: "bold"
-                  }}
+                  style={{ fontSize: 20, color: "black", fontWeight: "bold" }}
                 >
-                  {"<"}
+                  {this.state.focusedMonth.format("MMMM YYYY")}
                 </Text>
-              </TouchableOpacity>
-              <Text
-                style={{ fontSize: 20, color: "black", fontWeight: "bold" }}
-              >
-                {this.state.focusedMonth.format("MMMM YYYY")}
-              </Text>
-              <TouchableOpacity onPress={this.nextMonth}>
-                <Text
-                  style={{
-                    paddingHorizontal: 15,
-                    fontSize: 18,
-                    fontWeight: "bold"
-                  }}
-                >
-                  {">"}
-                </Text>
-              </TouchableOpacity>
+                <TouchableOpacity onPress={this.nextMonth}>
+                  <Text
+                    style={{
+                      paddingHorizontal: 15,
+                      fontSize: 18,
+                      fontWeight: "bold"
+                    }}
+                  >
+                    {">"}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+              <Month
+                mode={this.props.mode}
+                date={this.props.date}
+                startDate={this.props.startDate}
+                endDate={this.props.endDate}
+                focusedInput={this.props.focusedInput}
+                currentDate={this.state.currentDate}
+                focusedMonth={this.state.focusedMonth}
+                onDatesChange={this.onDatesChange}
+                isDateBlocked={this.props.isDateBlocked}
+                onDisableClicked={this.props.onDisableClicked}
+                selectedBgColor={this.props.selectedBgColor}
+                selectedTextColor={this.props.selectedTextColor}
+              />
             </View>
-            <Month
-              mode={this.props.mode}
-              date={this.props.date}
-              startDate={this.props.startDate}
-              endDate={this.props.endDate}
-              focusedInput={this.props.focusedInput}
-              currentDate={this.state.currentDate}
-              focusedMonth={this.state.focusedMonth}
-              onDatesChange={this.onDatesChange}
-              isDateBlocked={this.props.isDateBlocked}
-              onDisableClicked={this.props.onDisableClicked}
-              selectedBgColor={this.props.selectedBgColor}
-              selectedTextColor={this.props.selectedTextColor}
-            />
-          </View>
-        )}
-        {this.state.selectState === "year" && (
-          <View
-            style={[
-              styles.calendar,
-              { height: "75%", justifyContent: "center" }
-            ]}
-          >
-            <Picker
-              selectedValue={this.state.selectedYear}
-              onValueChange={this.changeYear}
+          )}
+          {this.state.selectState === "year" && (
+            <View
+              style={[
+                styles.calendar,
+                { height: "75%", justifyContent: "center" }
+              ]}
             >
-              {rangeArray.map((value, index) => {
-                return (
-                  <Picker.Item
-                    key={index}
-                    label={String(value)}
-                    value={value}
-                  />
-                );
-              })}
-            </Picker>
-          </View>
-        )}
+              <Picker
+                selectedValue={this.state.selectedYear}
+                onValueChange={this.changeYear}
+              >
+                {rangeArray.map((value, index) => {
+                  return (
+                    <Picker.Item
+                      key={index}
+                      label={String(value)}
+                      value={value}
+                    />
+                  );
+                })}
+              </Picker>
+            </View>
+          )}
+        </View>
       </View>
     );
   }
