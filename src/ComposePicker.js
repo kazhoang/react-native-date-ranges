@@ -36,9 +36,7 @@ export default class ComposePicker extends Component {
       endDate: null,
       date: new Date(),
       focus: 'startDate',
-      currentDate: moment(),
-      textStartDate: 'Start Date',
-      textEndDate: 'End Date'
+      currentDate: moment()
     };
   }
   isDateBlocked = date => {
@@ -98,6 +96,9 @@ export default class ComposePicker extends Component {
       alert('please select correct date');
     }
   };
+  onCancel = () => {
+    this.setState({ modalVisible: false, startDate: moment(this.props.startDate), endDate: moment(this.props.endDate)});
+  }
   getTitleElement() {
     const { placeholder, customStyles = {}, allowFontScaling } = this.props;
     const showContent = this.state.showContent;
@@ -125,7 +126,7 @@ export default class ComposePicker extends Component {
     const { customButton } = this.props;
 
     if (customButton) {
-      return customButton(this.onConfirm);
+      return customButton(this.onConfirm, this.onCancel);
     }
     return (
       <TouchableHighlight
@@ -188,8 +189,6 @@ export default class ComposePicker extends Component {
                   selectedTextColor={this.props.selectedTextColor || undefined}
                   mode={this.props.mode || 'single'}
                   currentDate={this.state.currentDate}
-                  textStartDate={this.state.textStartDate}
-                  textEndDate={this.state.textEndDate}
                 />
               </View>
               <View
